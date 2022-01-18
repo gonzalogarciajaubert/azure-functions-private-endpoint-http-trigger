@@ -275,6 +275,33 @@ deployTemplate \
     "$parameters"
 ```
 
+Before running the script you need to update the variables:
+```shell
+resourceGroupName="<your-resource-group-name>"
+location="<your-favorite-location>"
+```
+
+and configure the `adminPasswordOrKey` on the `azuredeploy.parameters.json` file. 
+
+```json
+        "adminPasswordOrKey": {
+            "value": "<CHANGE_ME>"
+        },
+```
+Or with a Key Vault. For example:
+
+```json
+        "adminPasswordOrKey": {
+            "reference": {
+                "keyVault": {
+                    "id": "/subscriptions/1a45a694-ae23-4650-9774-89a571c462f6/resourceGroups/BaboKeyVaultResourceGroup/providers/Microsoft.KeyVault/vaults/BaboKeyVault"
+                },
+                "secretName": "vmAdminPasswordOrKey"
+            }
+        },
+```
+
+
 The following figure shows the Azure resources grouped by type deployed by the ARM template in the target resource group.
 
 ![Resources](images/resources.png)

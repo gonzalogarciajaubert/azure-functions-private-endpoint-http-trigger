@@ -497,7 +497,8 @@
             "location": "[parameters('location')]",
             "name": "[parameters('virtualNetworkName')]",
             "dependsOn": [
-                "[variables('vmSubnetNsgId')]"
+                "[variables('vmSubnetNsgId')]",
+                "[variables('natGatewayId')]"
             ],
             "properties": {
                 "addressSpace": {

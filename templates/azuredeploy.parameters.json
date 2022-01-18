@@ -57,18 +57,13 @@
             "value": "Windows-10"
         },
         "imageSku": {
-            "value": "rs5-pro"
+            "value": "21h1-pro"
         },
         "adminUsername": {
             "value": "azadmin"
         },
         "adminPasswordOrKey": {
-            "reference": {
-                "keyVault": {
-                    "id": "/subscriptions/1a45a694-ae23-4650-9774-89a571c462f6/resourceGroups/BaboKeyVaultResourceGroup/providers/Microsoft.KeyVault/vaults/BaboKeyVault"
-                },
-                "secretName": "vmAdminPasswordOrKey"
-            }
+            "value": "<CHANGE_ME>"
         },
         "diskStorageAccounType": {
             "value": "Premium_LRS"

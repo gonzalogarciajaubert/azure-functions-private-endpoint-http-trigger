@@ -1,5 +1,9 @@
 #!/bin/bash
 
+COLOR_GREEN='\033[0;32m'
+COLOR_RED='\033[0;31m'
+COLOR_CYAN='\033[0;36m'
+
 # Variables
 resourceGroupName="<your-resource-group-name>"
 location="<your-favorite-location>"
@@ -20,26 +24,26 @@ createResourceGroup() {
 
     # Parameters validation
     if [[ -z $resourceGroupName ]]; then
-        echo "The resource group name parameter cannot be null"
+        echo -e "${COLOR_RED} 🧨 The resource group name parameter cannot be null"
         exit
     fi
 
     if [[ -z $location ]]; then
-        echo "The location parameter cannot be null"
+        echo -e "${COLOR_RED} 🧨 The location parameter cannot be null"
         exit
     fi
 
-    echo "Checking if [$resourceGroupName] resource group actually exists in the [$subscriptionName] subscription..."
+    echo -e "${COLOR_CYAN} ⏳ Checking if [$resourceGroupName] resource group actually exists in the [$subscriptionName] subscription..."
 
     if ! az group show --name "$resourceGroupName" &>/dev/null; then
-        echo "No [$resourceGroupName] resource group actually exists in the [$subscriptionName] subscription"
-        echo "Creating [$resourceGroupName] resource group in the [$subscriptionName] subscription..."
+        echo -e "${COLOR_CYAN} ⏳ No [$resourceGroupName] resource group actually exists in the [$subscriptionName] subscription"
+        echo -e "${COLOR_CYAN} ⏳ Creating [$resourceGroupName] resource group in the [$subscriptionName] subscription..."
 
         # Create the resource group
         if az group create --name "$resourceGroupName" --location "$location" 1>/dev/null; then
-            echo "[$resourceGroupName] resource group successfully created in the [$subscriptionName] subscription"
+            echo -e "${COLOR_GREEN} ✨🧙✨ [$resourceGroupName] resource group successfully created in the [$subscriptionName] subscription"
         else
-            echo "Failed to create [$resourceGroupName] resource group in the [$subscriptionName] subscription"
+            echo -e "${COLOR_RED} 🧨 Failed to create [$resourceGroupName] resource group in the [$subscriptionName] subscription"
             exit
         fi
     else
@@ -56,18 +60,18 @@ validateTemplate() {
 
     # Parameters validation
     if [[ -z $resourceGroupName ]]; then
-        echo "The resource group name parameter cannot be null"
+        echo -e "${COLOR_RED} 🧨 The resource group name parameter cannot be null"
     fi
 
     if [[ -z $template ]]; then
-        echo "The template parameter cannot be null"
+        echo -e "${COLOR_RED} 🧨 The template parameter cannot be null"
     fi
 
     if [[ -z $parameters ]]; then
-        echo "The parameters parameter cannot be null"
+        echo -e "${COLOR_RED} 🧨 The parameters parameter cannot be null"
     fi
 
-    echo "Validating [$template] ARM template..."
+    echo -e "${COLOR_CYAN} ⏳ Validating [$template] ARM template..."
 
     if [[ -z $arguments ]]; then
         error=$(az deployment group validate \
@@ -87,9 +91,9 @@ validateTemplate() {
     fi
 
     if [[ -z $error ]]; then
-        echo "[$template] ARM template successfully validated"
+        echo -e "${COLOR_GREEN} ✨🧙✨ [$template] ARM template successfully validated"
     else
-        echo "Failed to validate the [$template] ARM template"
+        echo -e "${COLOR_RED} 🧨 Failed to validate the [$template] ARM template"
         echo "$error"
         exit 1
     fi
@@ -104,17 +108,17 @@ deployTemplate() {
 
     # Parameters validation
     if [[ -z $resourceGroupName ]]; then
-        echo "The resource group name parameter cannot be null"
+        echo -e "${COLOR_RED} 🧨 The resource group name parameter cannot be null"
         exit
     fi
 
     if [[ -z $template ]]; then
-        echo "The template parameter cannot be null"
+        echo -e "${COLOR_RED} 🧨 The template parameter cannot be null"
         exit
     fi
 
     if [[ -z $parameters ]]; then
-        echo "The parameters parameter cannot be null"
+        echo -e "${COLOR_RED} 🧨 The parameters parameter cannot be null"
         exit
     fi
 
@@ -123,15 +127,15 @@ deployTemplate() {
     fi
 
     # Deploy the ARM template
-    echo "Deploying [$template$] ARM template..."
+    echo -e "${COLOR_CYAN} ⏳ Deploying [$template$] ARM template..."
 
     if [[ -z $arguments ]]; then
-         az deployment group create \
+         az deployment group create --verbose \
             --resource-group $resourceGroupName \
             --template-file $template \
             --parameters $parameters 1>/dev/null
     else
-         az deployment group create \
+         az deployment group create --verbose  \
             --resource-group $resourceGroupName \
             --template-file $template \
             --parameters $parameters \
@@ -139,9 +143,10 @@ deployTemplate() {
     fi
 
     if [[ $? == 0 ]]; then
-        echo "[$template$] ARM template successfully provisioned"
+        echo -e "${COLOR_GREEN} ✨🧙✨ [$template$] ARM template successfully provisioned"
     else
-        echo "Failed to provision the [$template$] ARM template"
+        echo -e "${COLOR_RED} 🧨 Failed to provision the [$template$] ARM template"
+        az group delete -n $resourceGroupName --subscription $subscriptionId
         exit -1
     fi
 }
